@@ -16,13 +16,14 @@ document.getElementById('send-button').addEventListener('click', () => {
   }
 });
 
-// Display messages
+// Display messages in real-time
 const messageContainer = document.getElementById('message-container');
 db.collection('groupChat').orderBy('timestamp').onSnapshot(snapshot => {
   messageContainer.innerHTML = '';
   snapshot.forEach(doc => {
     const messageData = doc.data();
     const messageElement = document.createElement('div');
+    messageElement.classList.add('message');
     messageElement.textContent = messageData.text;
     messageContainer.appendChild(messageElement);
   });
