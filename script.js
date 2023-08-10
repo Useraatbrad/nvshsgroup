@@ -1,15 +1,4 @@
 const db = firebase.firestore();
-const auth = firebase.auth();
-
-// Check if user is logged in
-auth.onAuthStateChanged(user => {
-  if (user) {
-    // User is logged in, show chat and DM containers
-    // You can add code here to fetch messages, DMs, and location data
-  } else {
-    // User is not logged in, redirect to login page or show login form
-  }
-});
 
 // Send message to group chat
 document.getElementById('send-button').addEventListener('click', () => {
@@ -26,3 +15,35 @@ document.getElementById('send-button').addEventListener('click', () => {
     messageInput.value = '';
   }
 });
+
+// Display messages
+const messageContainer = document.getElementById('message-container');
+db.collection('groupChat').orderBy('timestamp').onSnapshot(snapshot => {
+  messageContainer.innerHTML = '';
+  snapshot.forEach(doc => {
+    const messageData = doc.data();
+    const messageElement = document.createElement('div');
+    messageElement.textContent = messageData.text;
+    messageContainer.appendChild(messageElement);
+  });
+});
+
+// Display map
+function initMap() {
+  const map = new google.maps.Map(document.getElementById('map'), {
+    center: { lat: 37.7749, lng: -122.4194 }, // Default location (San Francisco)
+    zoom: 10
+  });
+
+  // Add markers for user locations
+  db.collection('userLocations').onSnapshot(snapshot => {
+    snapshot.forEach(doc => {
+      const location = doc.data();
+      new google.maps.Marker({
+        position: { lat: location.lat, lng: location.lng },
+        map: map,
+        title: location.username
+      });
+    });
+  });
+}
