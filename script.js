@@ -44,6 +44,9 @@ db.collection('groupChat').orderBy('timestamp').onSnapshot(snapshot => {
     }
     
     messageContainer.appendChild(messageElement);
+    
+    // Scroll to the latest message
+    messageContainer.scrollTop = messageContainer.scrollHeight;
   });
 });
 
